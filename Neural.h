@@ -26,7 +26,7 @@ public:
     //Setting base weights
     void setWeights();
 
-    //Function to calculate "Mean Square Error"
+    //Mean Square Error
     double MSE(vector<double> Ytrue);
 
     //Training function

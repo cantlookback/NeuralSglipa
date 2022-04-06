@@ -6,20 +6,23 @@
 #include "Neural.h"
 using namespace std;
 
-    vector<vector<double>> datasheet;
-    vector<double> answers;
-    const int N = 5000;
+vector<vector<double>> datasheet;
+vector<double> answers;
 
+const int N = 5000; //Amount of data strings
+const int K = 3; //Number of input neurons
+
+//Function to transfer datasheet from file to vector<>
 void makeDatasheet(){
     ifstream fileInput;
     fileInput.open("C:\\sem4cpp\\neuralNetwork\\datasheet.txt");
-    double data[N][3];
+    double data[N][K];
     double ans[N];
 
     bool print = 1;
     while (print){
         for (int i = 0 ; i < N; i++){
-            for (int j = 0 ; j < 3; j++){
+            for (int j = 0 ; j < K; j++){
                 fileInput >> data[i][j];
             }
         }
@@ -38,7 +41,7 @@ void makeDatasheet(){
     fileInput.close();
 
     for (int i = 0; i < N; i++){
-        for (int j = 0; j < 3; j++){
+        for (int j = 0; j < K; j++){
             datasheet[i][j] = data[i][j];
         }
         answers[i] = ans[i];
@@ -48,19 +51,21 @@ void makeDatasheet(){
 
 
 int main() {
-    NeuralNetwork net {3};
+    NeuralNetwork net {K};
     net.setWeights();
+    
     datasheet.resize(N);
     for (int i = 0; i < N; i++){
         datasheet[i].resize(3);
     }
     answers.resize(N);
+
     makeDatasheet();
-
-
+    //Example for XOR
     vector<vector<double>> d = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     vector<double> a = {0, 1, 1, 0};
     net.train(&d, &a);
+    
     net.print();
 
     vector<vector<double>> test = {{1, 0}};

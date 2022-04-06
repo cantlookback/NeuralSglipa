@@ -82,7 +82,7 @@ void NeuralNetwork::feedForward(vector<double>* data) {
 void NeuralNetwork::setWeights() {
     for (unsigned i = 0; i < weights.size(); i++) {
         for (unsigned j = 0; j < weights[i].size(); j++) {
-            weights[i][j] = 1;//(static_cast<double>(rand()) / RAND_MAX) * 2 - 1;
+            weights[i][j] = 1;// (static_cast<double>(rand()) / RAND_MAX) * 2 - 1;
         }
     }
 }
@@ -101,9 +101,9 @@ double NeuralNetwork::MSE(vector<double> Ytrue) {
 
 //TODO: It's working, but smth wrong, need to fix.
 void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers) {
-    //*d_X | Clean
+    //*d_X | Clean after every iteration
     vector<vector<double>> d_X;
-    //* GRADs | Clean
+    //* GRADs | Clean after any iteration
     vector<vector<double>> GRADs;
     //* dW | noClean
     vector<vector<double>> dW;
@@ -122,18 +122,21 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
         dW[i].resize(weights[i].size());
     }
 
-    double trainRate = 0.7;
+    double trainRate = 0.7; //Eta
     double alpha = 0.3;
     
     for (unsigned epoc = 0; epoc < 100; epoc++) {
         //cout << epoc;
         for (unsigned jija = 0; jija < data->size(); jija++) {
+            //Feeding data to the net
             feedForward(&(*data)[jija]);
 
+            //Calculating the derives for output layer
             for (unsigned i = 0; i < d_X[network.first - 1].size(); i++) {
                 d_X[network.first - 1][i] = ((*answers)[i] - values[network.first - 1][i]) * sigm_deriv(values[network.first - 1][i]);
             }
 
+            //Calculating all other derives
             for (int i = network.first - 2; i >= 0; i--) {
                 for (unsigned j = 0; j < d_X[i].size(); j++) {
                     for (unsigned k = 0; k < d_X[i + 1].size(); k++) {
@@ -143,6 +146,7 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
                 }
             }
             
+            //Calculating Gradients
             for (unsigned i = 0; i < GRADs.size(); i++) {
                 for (unsigned j = 0; j < GRADs[i].size(); j++) {
                     GRADs[i][j] = values[i][j % values[i].size()] * d_X[i + 1][int(j / values[i].size())];
@@ -175,18 +179,20 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
             //G{1,1} = v{1,1} * d{2,0}
             //G{1,2} = v{1,2} * d{2,0}
 
+            //Calculating dW
             for (unsigned i = 0; i < dW.size(); i++){
                 for (int j = 0; j < dW[i].size(); j++){
                     dW[i][j] = trainRate * GRADs[i][j] + alpha * dW[i][j];
                 }
             }
-
+            //Updating weights
             for (unsigned i = 0; i < weights.size(); i++){
                 for (int j = 0; j < weights[i].size(); j++){
                     weights[i][j] += dW[i][j];
                 }
             }
 
+            //Clearing for next iteration
             for (unsigned i = 0; i < d_X.size(); i++){
                 for (unsigned j = 0; j < d_X[i].size(); j++){
                     d_X[i][j] = 0;
