@@ -46,6 +46,8 @@ void NeuralNetwork::print() {
         }
         cout << "\n|";
     }
+
+    cout << "\n OUTPUT VALUE: " << values[network.first - 1][0] << endl;
 }
 
 double NeuralNetwork::sigm(double arg) {
@@ -82,7 +84,7 @@ void NeuralNetwork::feedForward(vector<double>* data) {
 void NeuralNetwork::setWeights() {
     for (unsigned i = 0; i < weights.size(); i++) {
         for (unsigned j = 0; j < weights[i].size(); j++) {
-            weights[i][j] = 1;// (static_cast<double>(rand()) / RAND_MAX) * 2 - 1;
+            weights[i][j] = (static_cast<double>(rand()) / RAND_MAX) * 2 - 1;
         }
     }
 }
@@ -122,10 +124,10 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
         dW[i].resize(weights[i].size());
     }
 
-    double trainRate = 0.7; //Eta
-    double alpha = 0.3;
+    double trainRate = 1; //Eta
+    double alpha = 0.1;
     
-    for (unsigned epoc = 0; epoc < 100; epoc++) {
+    for (unsigned epoc = 0; epoc < 1500; epoc++) {
         //cout << epoc;
         for (unsigned jija = 0; jija < data->size(); jija++) {
             //Feeding data to the net
@@ -133,7 +135,7 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
 
             //Calculating the derives for output layer
             for (unsigned i = 0; i < d_X[network.first - 1].size(); i++) {
-                d_X[network.first - 1][i] = ((*answers)[i] - values[network.first - 1][i]) * sigm_deriv(values[network.first - 1][i]);
+                d_X[network.first - 1][i] = ((*answers)[jija] - values[network.first - 1][i]) * sigm_deriv(values[network.first - 1][i]);
             }
 
             //Calculating all other derives

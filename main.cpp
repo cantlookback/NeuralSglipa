@@ -4,25 +4,26 @@
 #include <string>
 #include <vector>
 #include "Neural.h"
+#include "Neural.cpp"
 using namespace std;
 
 vector<vector<double>> datasheet;
 vector<double> answers;
 
-const int N = 5000; //Amount of data strings
+const int N = 5000; //Number of strings in dataset
 const int K = 3; //Number of input neurons
 
-//Function to transfer datasheet from file to vector<>
+//For moving dataset from file to a vector<>
 void makeDatasheet(){
     ifstream fileInput;
     fileInput.open("C:\\sem4cpp\\neuralNetwork\\datasheet.txt");
-    double data[N][K];
+    double data[N][3];
     double ans[N];
 
     bool print = 1;
     while (print){
         for (int i = 0 ; i < N; i++){
-            for (int j = 0 ; j < K; j++){
+            for (int j = 0 ; j < 3; j++){
                 fileInput >> data[i][j];
             }
         }
@@ -41,72 +42,60 @@ void makeDatasheet(){
     fileInput.close();
 
     for (int i = 0; i < N; i++){
-        for (int j = 0; j < K; j++){
+        for (int j = 0; j < 3; j++){
             datasheet[i][j] = data[i][j];
         }
         answers[i] = ans[i];
     }
-
 }
 
-
 int main() {
-    NeuralNetwork net {K};
+    
+    int layers;
+    cout << "Enter number of Layers>>";
+    cin >> layers;
+
+    NeuralNetwork net {layers};
+
     net.setWeights();
+    //!! Example of working XOR
+    //!! Good working with 4 layers, 2 3 3 1.
+    //!! Eta = 1 | Alpha = 0.1 | Epochs = 1500
+    vector<vector<double>> data = {{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}, {1, 0}};
+    vector<double> ans = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
     
-    datasheet.resize(N);
-    for (int i = 0; i < N; i++){
-        datasheet[i].resize(3);
+    cout << "START TRAINING\n";
+    net.train(&data, &ans);
+    
+    cout << "STOP TRAINING\n";
+    net.print();
+
+
+    vector<double> test;
+    double trueAnswer = 0;
+    bool go = 1;
+    while (go){
+        int a = 0, b = 0;
+        cout << "Enter data for test >>> ";
+        cin >> a >> b;
+        test.push_back(a);
+        test.push_back(b);
+
+        cout << "Enter the right answer >>> ";
+        cin >> trueAnswer;
+
+        cout << "FORWARDING...\n";
+        net.feedForward(&test);
+        cout << "DONE!\n";
+
+        net.print();
+
+        cout << "\n MSE == " << net.MSE({trueAnswer}) << endl;
+
+        cout << "Want to try again?\n1 - YES\n0 - NO\n";
+        cin >> go;
+        test.clear();
     }
-    answers.resize(N);
-
-    makeDatasheet();
-    //Example for XOR
-    vector<vector<double>> d = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-    vector<double> a = {0, 1, 1, 0};
-    net.train(&d, &a);
-    
-    net.print();
-
-    vector<vector<double>> test = {{1, 0}};
-    net.feedForward(&test[0]);
-    net.print();
-    cout << "\n\n" << net.MSE({1});
-
-
-/*
-    vector<double> test1 = {-3.07276, 3.2815, 3.95383};
-    vector<double> test2 = {3.07276, -3.2815, 3.95383};
-    vector<double> test3 = {3.07276, 3.2815, -3.95383};
-    vector<double> test4 = {-3.07276, -3.2815, 3.95383};
-    vector<double> test5 = {3.07276, -3.2815, -3.95383};
-    vector<double> test6 = {-3.07276, 3.2815, -3.95383};
-
-    net.feedForward(&test1);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-    net.feedForward(&test2);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-    net.feedForward(&test3);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-    net.feedForward(&test4);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-    net.feedForward(&test5);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-    net.feedForward(&test6);
-    cout << "\n\n\n";
-    net.print();
-    cout << endl << "MSE >>> " << net.MSE({1}) << "\n\n\n";
-*/
 
     return 0;
 }
