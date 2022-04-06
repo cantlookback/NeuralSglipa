@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "Neural.h"
-#include "Neural.cpp"
 using namespace std;
 
 vector<vector<double>> datasheet;
