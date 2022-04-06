@@ -49,12 +49,16 @@ void makeDatasheet(){
 }
 
 int main() {
-    
     int layers;
-    cout << "Enter number of Layers>>";
+    double eta, alpha;
+
+    cout << "Enter number of Layers >>> ";
     cin >> layers;
 
-    NeuralNetwork net {layers};
+    cout << "Enter Eta & Alpha >>> ";
+    cin >> eta >> alpha;
+
+    NeuralNetwork net {layers, eta, alpha};
 
     net.setWeights();
     //!! Example of working XOR

@@ -1,6 +1,6 @@
 #include "Neural.h"
 
-NeuralNetwork::NeuralNetwork(int m_layers) {
+NeuralNetwork::NeuralNetwork(int m_layers, double m_eta = 1, double m_alpha = 0.1) : trainRate(m_eta), alpha(m_alpha) {
     network.first = m_layers;
     weights.resize(m_layers - 1);
     values.resize(m_layers);
@@ -124,8 +124,8 @@ void NeuralNetwork::train(vector<vector<double>>* data, vector<double>* answers)
         dW[i].resize(weights[i].size());
     }
 
-    double trainRate = 1; //Eta
-    double alpha = 0.1;
+    trainRate = 1; //Eta
+    alpha = 0.1;
     
     for (unsigned epoc = 0; epoc < 1500; epoc++) {
         //cout << epoc;

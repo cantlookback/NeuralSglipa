@@ -9,7 +9,7 @@ using namespace std;
 class NeuralNetwork {
 public:
     //Construcor. setting layers, weights and values vectors.
-    NeuralNetwork(int m_layers);
+    NeuralNetwork(int m_layers, double m_eta, double m_alpha);
 
     //Function to view network internals
     void print();
@@ -39,6 +39,7 @@ private:
     vector<vector<double>> weights;
     //* Values of neurons in each layer
     vector<vector<double>> values;
+    double trainRate = 1, alpha = 0.1;
 };
 
 #endif
